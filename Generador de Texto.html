@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#121212">
+    <title>Generador de Texto Estilizado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .controles-superiores {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .opcion-tildes {
+            display: flex;
+            align-items: center;
+            background: #1e1e1e;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-right: 5px;
+            color: #ffffff;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 8px 0;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            box-sizing: border-box;
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            min-width: 80px;
+        }
+        #copiar {
+            background-color: #008CBA;
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 0 0;
+            font-size: 16px;
+        }
+        #borrar {
+            background-color: #f44336;
+            margin-left: 10px;
+        }
+        #resultado {
+            font-size: 18px;
+            margin: 8px 0;
+            padding: 15px;
+            background-color: #1e1e1e;
+            border: 2px dashed #4CAF50;
+            border-radius: 5px;
+            min-height: 50px;
+            word-wrap: break-word;
+            user-select: all;
+            color: #ffffff;
+            white-space: pre-wrap;
+            font-family: monospace;
+            line-height: 1.5;
+        }
+        .contenedor-iconos {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .icono-btn {
+            font-size: 24px;
+            cursor: pointer;
+            background: #333;
+            border: none;
+            padding: 8px;
+            border-radius: 5px;
+            transition: all 0.2s;
+            color: #ffffff;
+        }
+        .icono-btn:hover {
+            transform: scale(1.2);
+            background: #444;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+            margin-left: 5px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #666;
+            transition: .4s;
+            border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        .selector-fuentes {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #333;
+            font-size: 16px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+        .selector-fuentes option {
+            background: #1e1e1e;
+            color: #ffffff;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1 style="
+    text-align: center;
+    font-size: 1.5em;
+    color: #F5F5DC;
+    margin: 1px 0 5px 0; /* Ajuste clave aquí */
+    padding-top: 4px; /* Espacio desde el borde superior */
+    font-family: Arial, sans-serif;
+">𝗚𝗲𝗻𝗲𝗿𝗮𝗱𝗼𝗿 𝗱𝗲 𝘁𝗲𝘅𝘁𝗼𝘀</h1>
+    <div class="controles-superiores">
+        <div class="opcion-tildes">
+            <span>Eliminar tildes:</span>
+            <label class="switch">
+                <input type="checkbox" id="eliminarTildes" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <button onclick="generarTexto()">Generar</button>
+        <button id="borrar" onclick="document.getElementById('textoEntrada').value = ''; generarTexto()">Borrar</button>
+    </div>
+
+    <textarea id="textoEntrada" placeholder="Escribe tu texto aquí..."></textarea>
+    
+    <div class="contenedor-iconos">
+        <button class="icono-btn" onclick="insertarIcono('☠️')">☠️</button>
+        <button class="icono-btn" onclick="insertarIcono('💀')">💀</button>
+        <button class="icono-btn" onclick="insertarIcono('🔥')">🔥</button>
+        <button class="icono-btn" onclick="insertarIcono('🌟')">🌟</button>
+        <button class="icono-btn" onclick="insertarIcono('✨')">✨</button>
+        <button class="icono-btn" onclick="insertarIcono('💫')">💫</button>
+        <button class="icono-btn" onclick="insertarIcono('❤️')">❤️</button>
+        <button class="icono-btn" onclick="insertarIcono('🌹')">🌹</button>
+    </div>
+
+    <div id="resultado" onclick="seleccionarTexto()"></div>
+    <button id="copiar" onclick="copiarTexto()">Copiar texto</button>
+    
+    <select class="selector-fuentes" id="selectorFuente" onchange="generarTexto()">
+        <option value="bold-math">𝐒𝐀𝐍𝐙𝐎𝐒 (Negrita Matemática)</option>
+        <option value="bold-sans">𝗦𝗔𝗡𝗭𝗢𝗦 (Negrita Sans-Serif)</option>
+        <option value="gothic">𝔊𝔬𝔱𝔥𝔦𝔠 (Gótica)</option>
+        <option value="double-struck">ℂ𝕠𝕠𝕝 (Doble Remate)</option>
+        <option value="bold-italic">𝑷𝒓𝒐𝒃𝒂𝒏𝒅𝒐 (Negrita Cursiva)</option>
+    </select>
+    
+<div style="margin-top: 20px;">
+    <h3 style="color: #4CAF50; margin-bottom: 8px;">Editor de texto</h3>
+    <textarea 
+        id="blocNotas" 
+        placeholder="Escribe aquí tus notas o edita el texto generado..." 
+        style="width: 100%; height: 100px; margin-bottom: 8px; padding: 10px; background-color: #1e1e1e; color: white; border: 2px solid #333; border-radius: 5px;"
+    ></textarea>
+    <button 
+        onclick="copiarBloc()" 
+        style="background-color: #9C27B0; width: 100%; padding: 10px; border: none; color: white; border-radius: 5px; cursor: pointer;"
+    >
+        Copiar texto
+    </button>
+</div>
+
+<script>
+	
+	function copiarBloc() {
+    const bloc = document.getElementById("blocNotas");
+    bloc.select();
+    document.execCommand('copy');
+    alert("📋 ¡Contenido del bloc copiado!");
+}
+
+    // Mapeo de fuentes (actualizado con Negrita Cursiva)
+    const fuentes = {
+        'bold-math': {
+            'A': '𝐀', 'B': '𝐁', 'C': '𝐂', 'D': '𝐃', 'E': '𝐄', 'F': '𝐅', 'G': '𝐆', 'H': '𝐇', 'I': '𝐈', 'J': '𝐉',
+            'K': '𝐊', 'L': '𝐋', 'M': '𝐌', 'N': '𝐍', 'O': '𝐎', 'P': '𝐏', 'Q': '𝐐', 'R': '𝐑', 'S': '𝐒', 'T': '𝐓',
+            'U': '𝐔', 'V': '𝐕', 'W': '𝐖', 'X': '𝐗', 'Y': '𝐘', 'Z': '𝐙',
+            'a': '𝐚', 'b': '𝐛', 'c': '𝐜', 'd': '𝐝', 'e': '𝐞', 'f': '𝐟', 'g': '𝐠', 'h': '𝐡', 'i': '𝐢', 'j': '𝐣',
+            'k': '𝐤', 'l': '𝐥', 'm': '𝐦', 'n': '𝐧', 'o': '𝐨', 'p': '𝐩', 'q': '𝐪', 'r': '𝐫', 's': '𝐬', 't': '𝐭',
+            'u': '𝐮', 'v': '𝐯', 'w': '𝐰', 'x': '𝐱', 'y': '𝐲', 'z': '𝐳',
+            '0': '𝟎', '1': '𝟏', '2': '𝟐', '3': '𝟑', '4': '𝟒', '5': '𝟓', '6': '𝟔', '7': '𝟕', '8': '𝟖', '9': '𝟗'
+        },
+        'bold-sans': {
+            'A': '𝗔', 'B': '𝗕', 'C': '𝗖', 'D': '𝗗', 'E': '𝗘', 'F': '𝗙', 'G': '𝗚', 'H': '𝗛', 'I': '𝗜', 'J': '𝗝',
+            'K': '𝗞', 'L': '𝗟', 'M': '𝗠', 'N': '𝗡', 'O': '𝗢', 'P': '𝗣', 'Q': '𝗤', 'R': '𝗥', 'S': '𝗦', 'T': '𝗧',
+            'U': '𝗨', 'V': '𝗩', 'W': '𝗪', 'X': '𝗫', 'Y': '𝗬', 'Z': '𝗭',
+            'a': '𝗮', 'b': '𝗯', 'c': '𝗰', 'd': '𝗱', 'e': '𝗲', 'f': '𝗳', 'g': '𝗴', 'h': '𝗵', 'i': '𝗶', 'j': '𝗷',
+            'k': '𝗸', 'l': '𝗹', 'm': '𝗺', 'n': '𝗻', 'o': '𝗼', 'p': '𝗽', 'q': '𝗾', 'r': '𝗿', 's': '𝘀', 't': '𝘁',
+            'u': '𝘂', 'v': '𝘃', 'w': '𝘄', 'x': '𝘅', 'y': '𝘆', 'z': '𝘇',
+            '0': '𝟬', '1': '𝟭', '2': '𝟮', '3': '𝟯', '4': '𝟰', '5': '𝟱', '6': '𝟲', '7': '𝟳', '8': '𝟴', '9': '𝟵'
+        },
+        'gothic': {
+            'A': '𝔄', 'B': '𝔅', 'C': 'ℭ', 'D': '𝔇', 'E': '𝔈', 'F': '𝔉', 'G': '𝔊', 'H': 'ℌ', 'I': 'ℑ', 'J': '𝔍',
+            'K': '𝔎', 'L': '𝔏', 'M': '𝔐', 'N': '𝔑', 'O': '𝔒', 'P': '𝔓', 'Q': '𝔔', 'R': 'ℜ', 'S': '𝔖', 'T': '𝔗',
+            'U': '𝔘', 'V': '𝔙', 'W': '𝔚', 'X': '𝔛', 'Y': '𝔜', 'Z': 'ℨ',
+            'a': '𝔞', 'b': '𝔟', 'c': '𝔠', 'd': '𝔡', 'e': '𝔢', 'f': '𝔣', 'g': '𝔤', 'h': '𝔥', 'i': '𝔦', 'j': '𝔧',
+            'k': '𝔨', 'l': '𝔩', 'm': '𝔪', 'n': '𝔫', 'o': '𝔬', 'p': '𝔭', 'q': '𝔮', 'r': '𝔯', 's': '𝔰', 't': '𝔱',
+            'u': '𝔲', 'v': '𝔳', 'w': '𝔴', 'x': '𝔵', 'y': '𝔶', 'z': '𝔷'
+        },
+        'double-struck': {
+            'A': '𝔸', 'B': '𝔹', 'C': 'ℂ', 'D': '𝔻', 'E': '𝔼', 'F': '𝔽', 'G': '𝔾', 'H': 'ℍ', 'I': '𝕀', 'J': '𝕁',
+            'K': '𝕂', 'L': '𝕃', 'M': '𝕄', 'N': 'ℕ', 'O': '𝕆', 'P': 'ℙ', 'Q': 'ℚ', 'R': 'ℝ', 'S': '𝕊', 'T': '𝕋',
+            'U': '𝕌', 'V': '𝕍', 'W': '𝕎', 'X': '𝕏', 'Y': '𝕐', 'Z': 'ℤ',
+            'a': '𝕒', 'b': '𝕓', 'c': '𝕔', 'd': '𝕕', 'e': '𝕖', 'f': '𝕗', 'g': '𝕘', 'h': '𝕙', 'i': '𝕚', 'j': '𝕛',
+            'k': '𝕜', 'l': '𝕝', 'm': '𝕞', 'n': '𝕟', 'o': '𝕠', 'p': '𝕡', 'q': '𝕢', 'r': '𝕣', 's': '𝕤', 't': '𝕥',
+            'u': '𝕦', 'v': '𝕧', 'w': '𝕨', 'x': '𝕩', 'y': '𝕪', 'z': '𝕫',
+            '0': '𝟘', '1': '𝟙', '2': '𝟚', '3': '𝟛', '4': '𝟜', '5': '𝟝', '6': '𝟞', '7': '𝟟', '8': '𝟠', '9': '𝟡'
+        },
+        'bold-italic': {
+            'A': '𝑨', 'B': '𝑩', 'C': '𝑪', 'D': '𝑫', 'E': '𝑬', 'F': '𝑭', 'G': '𝑮', 'H': '𝑯', 'I': '𝑰', 'J': '𝑱',
+            'K': '𝑲', 'L': '𝑳', 'M': '𝑴', 'N': '𝑵', 'O': '𝑶', 'P': '𝑷', 'Q': '𝑸', 'R': '𝑹', 'S': '𝑺', 'T': '𝑻',
+            'U': '𝑼', 'V': '𝑽', 'W': '𝑾', 'X': '𝑿', 'Y': '𝒀', 'Z': '𝒁',
+            'a': '𝒂', 'b': '𝒃', 'c': '𝒄', 'd': '𝒅', 'e': '𝒆', 'f': '𝒇', 'g': '𝒈', 'h': '𝒉', 'i': '𝒊', 'j': '𝒋',
+            'k': '𝒌', 'l': '𝒍', 'm': '𝒎', 'n': '𝒏', 'o': '𝒐', 'p': '𝒑', 'q': '𝒒', 'r': '𝒓', 's': '𝒔', 't': '𝒕',
+            'u': '𝒖', 'v': '𝒗', 'w': '𝒘', 'x': '𝒙', 'y': '𝒚', 'z': '𝒛',
+            '0': '𝟎', '1': '𝟏', '2': '𝟐', '3': '𝟑', '4': '𝟒', '5': '𝟓', '6': '𝟔', '7': '𝟕', '8': '𝟖', '9': '𝟗'
+        }
+    };
+
+    // Función para insertar iconos
+    function insertarIcono(icono) {
+        const textarea = document.getElementById("textoEntrada");
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        
+        textarea.value = text.substring(0, start) + icono + text.substring(end);
+        textarea.selectionStart = textarea.selectionEnd = start + icono.length;
+        textarea.focus();
+        generarTexto();
+    }
+
+    // Función para generar texto
+    function generarTexto() {
+        const texto = document.getElementById("textoEntrada").value;
+        const eliminarTildes = document.getElementById("eliminarTildes").checked;
+        const fuente = document.getElementById("selectorFuente").value;
+        
+        let textoLimpio = eliminarTildes ? 
+            texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : 
+            texto;
+        
+        let resultado = "";
+        const mapa = fuentes[fuente] || fuentes['bold-math'];
+        
+        const lineas = textoLimpio.split('\n');
+        for (let linea of lineas) {
+            for (let letra of linea) {
+                resultado += mapa[letra] || letra;
+            }
+            resultado += '\n';
+        }
+        
+        document.getElementById("resultado").innerHTML = resultado.replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
+    }
+
+    // Función para copiar texto
+    function copiarTexto() {
+        const textoResultado = document.getElementById("resultado");
+        const textoPlano = textoResultado.textContent || textoResultado.innerText;
+        
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(textoPlano)
+                .then(() => alert("✅ ¡Texto copiado!"))
+                .catch(() => copiarFallback(textoResultado));
+        } else {
+            copiarFallback(textoResultado);
+        }
+    }
+
+    // Función alternativa para copiar
+    function copiarFallback(elemento) {
+        const rango = document.createRange();
+        rango.selectNode(elemento);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(rango);
+        
+        try {
+            const exito = document.execCommand('copy');
+            alert(exito ? "✅ ¡Copiado!" : "❌ Error al copiar");
+        } catch (e) {
+            alert("⚠️ Selecciona el texto manualmente");
+        }
+        
+        window.getSelection().removeAllRanges();
+    }
+
+    // Función para seleccionar texto
+    function seleccionarTexto() {
+        const texto = document.getElementById("resultado");
+        const seleccion = window.getSelection();
+        const rango = document.createRange();
+        rango.selectNodeContents(texto);
+        seleccion.removeAllRanges();
+        seleccion.addRange(rango);
+    }
+
+    // Inicializar
+    window.onload = generarTexto;
+</script>
+</body>
+</html>
